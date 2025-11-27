@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Створення Героя</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- Підключаємо фентезі-шрифти -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            margin: 0; padding: 0;
+            background-color: #0b0b0b;
+            background-image: url('https://i.im.ge/2025/11/26/4hXkPS.Far-Lands.png'); /* Темна карта, як фон */
+            background-size: cover;
+            background-position: center;
+            color: #e0e0e0;
+            font-family: 'Lato', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+            user-select: none;
+        }
+        
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.8), rgba(0,0,0,0.95));
+            z-index: 1;
+            backdrop-filter: blur(5px);
+        }
+
+        .creator-container {
+            z-index: 2;
+            width: 90%;
+            max-width: 400px;
+            padding: 20px;
+            text-align: center;
+            background: rgba(17, 17, 17, 0.85); /* Затемнений фон блоку */
+            border: 1px solid #333;
+            box-shadow: 0 0 20px rgba(0,0,0,0.7);
+        }
+
+        /* Стиль Cinzel для заголовків */
+        .title {
+            font-family: 'Cinzel', serif;
+            font-size: 28px;
+            color: #c0a062; /* Тьмяне золото */
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 20px;
+        }
+
+        /* Кнопки вибору (Раса, Клас) */
+        .choice-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            font-family: 'Cinzel', serif;
+            font-size: 16px;
+            background: rgba(192, 160, 98, 0.05);
+            border: 1px solid #444;
+            color: #ccc;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+        }
+
+        .choice-btn:hover {
+            background: rgba(192, 160, 98, 0.15);
+            border-color: #c0a062;
+            color: #fff;
+        }
+
+        .choice-btn.selected {
+            background: #c0a062;
+            color: #000;
+            border-color: #fff;
+            box-shadow: 0 0 15px rgba(192, 160, 98, 0.6);
+            transform: scale(1.02);
+        }
+        
+        /* Кнопки навігації (Далі/Назад) */
+        .nav-btn {
+            background: #2a2a2a;
+            border: 1px solid #666;
+            color: #ccc;
+            padding: 10px 20px;
+            font-family: 'Lato', sans-serif;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin: 5px;
+        }
+        
+        .nav-btn.primary {
+            background: #c0a062;
+            color: #000;
+            border-color: #fff;
+        }
+        
+        .nav-btn:hover {
+            background: #444;
+        }
+        .nav-btn.primary:hover {
+            background: #d4b581;
+        }
+
+        /* Слайдер віку */
+        #age-slider {
+            width: 100%;
+            margin: 20px 0 10px 0;
+        }
+        
+        /* Опис вибору */
+        #choice-description {
+            min-height: 50px;
+            font-size: 13px;
+            color: #999;
+            margin-bottom: 15px;
+            border-top: 1px solid #222;
+            padding-top: 10px;
+        }
+        
+        /* Анімація переходу між кроками */
+        .step {
+            display: none;
+            animation: slideIn 0.5s forwards;
+            padding: 10px 0;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+    </style>
+</head>
+<body>
+
+    <div class="overlay"></div>
+
+    <div class="creator-container">
+        
+        <div class="title">Створення Героя</div>
+        <div class="subtitle" id="step-title">Крок 1: Оберіть Расу</div>
+
+        <!-- Крок 1: Вибір Раси -->
+        <div id="step-1" class="step">
+            <div id="choice-description">
+                Опис раси буде тут.
+            </div>
+            <div id="race-choices">
+                <!-- Кнопки рас генеруються JS -->
+            </div>
+            <button class="nav-btn primary" onclick="nextStep()">Далі</button>
+        </div>
+
+        <!-- Крок 2: Вік та Стать -->
+        <div id="step-2" class="step">
+            <label style="display: block; margin-bottom: 5px; color: #ccc;">Вік: <span id="age-value">25</span> років</label>
+            <input type="range" min="16" max="60" value="25" id="age-slider" oninput="updateAge(this.value)">
+            
+            <h4 style="margin-top: 25px; margin-bottom: 10px; font-family: 'Cinzel', serif; font-size: 18px; color: #c0a062;">Стать</h4>
+            <div id="gender-choices">
+                <!-- Кнопки статі генеруються JS -->
+            </div>
+
+            <button class="nav-btn" onclick="prevStep()">Назад</button>
+            <button class="nav-btn primary" onclick="nextStep()">Далі</button>
+        </div>
+        
+        <!-- Крок 3: Вибір Класу -->
+        <div id="step-3" class="step">
+            <div id="choice-description-class">
+                Опис класу буде тут.
+            </div>
+            <div id="class-choices">
+                <!-- Кнопки класів генеруються JS -->
+            </div>
+            <button class="nav-btn" onclick="prevStep()">Назад</button>
+            <button class="nav-btn primary" onclick="finalizeCreation()">Створити Героя</button>
+        </div>
+        
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.MainButton.hide();
+
+        // --- КОНФІГУРАЦІЯ ГРИ (МАЄ БУТИ СИНХРОНІЗОВАНА З config.py) ---
+        const RPG_RACES = {
+            "Людина": "Універсальні та стійкі. Не мають переваг, але й не мають слабких місць. Ідеально для новачків.",
+            "Ельф": "Спритні та розумні. Мають бонус до Магії та Спритності. Слабкість: низька витривалість.",
+            "Гном": "Кремезні та витривалі. Мають бонус до Життя та Сили. Слабкість: низька Спритність.",
+            "Орк": "Найсильніші. Мають великий бонус до Сили. Слабкість: низький Інтелект та Репутація.",
+            "Напіврослик": "Удачливі. Мають бонус до Удачі та Спритності. Слабкість: низька Сила."
+        };
+        const RPG_GENDERS = ["Чоловік", "Жінка", "Інше"];
+        const RPG_CLASSES = {
+            "Воїн": "Майстер ближнього бою. Високе Життя та Сила. Спеціалізується на мечах та обладунках.",
+            "Маг": "Опанував стихії. Високий Інтелект та запас Мани. Слабкість: дуже низький захист.",
+            "Злодій": "Майстер прихованих ударів та пасток. Висока Спритність та Удача. Слабкість: слабкий у прямому бою.",
+            "Мисливець": "Фахівець зі стрільби. Баланс Спритності та Витривалості. Спеціалізується на луках.",
+            "Жрець": "Цілитель та захисник. Висока Мана та Мудрість. Може підтримувати групу, але слабкий у атаці."
+        };
+
+        let currentStep = 1;
+        const state = {
+            race: null,
+            gender: null,
+            age: 25,
+            class: null
+        };
+        
+        // --- ГЕНЕРАЦІЯ ІНТЕРФЕЙСУ ---
+        function generateChoices(containerId, data, selectionKey, descriptionId = null) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            const dataKeys = Array.isArray(data) ? data : Object.keys(data);
+
+            dataKeys.forEach(key => {
+                const btn = document.createElement('button');
+                btn.className = 'choice-btn';
+                btn.textContent = key;
+                btn.setAttribute('data-value', key);
+                
+                if (state[selectionKey] === key) {
+                    btn.classList.add('selected');
+                }
+
+                btn.onclick = () => {
+                    // Зняття виділення з усіх кнопок
+                    container.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
+                    
+                    // Встановлення виділення на поточну
+                    btn.classList.add('selected');
+                    state[selectionKey] = key;
+                    
+                    if (descriptionId) {
+                        document.getElementById(descriptionId).textContent = data[key];
+                    }
+                };
+                container.appendChild(btn);
+            });
+        }
+        
+        function updateAge(value) {
+            document.getElementById('age-value').textContent = value;
+            state.age = parseInt(value);
+        }
+
+        // --- ЛОГІКА НАВІГАЦІЇ ---
+        function updateUI() {
+            document.querySelectorAll('.step').forEach(step => step.style.display = 'none');
+            
+            const currentStepElement = document.getElementById(`step-${currentStep}`);
+            if (currentStepElement) {
+                currentStepElement.style.display = 'block';
+            }
+            
+            // Оновлення заголовку
+            const titles = {
+                1: "Крок 1: Оберіть Расу",
+                2: "Крок 2: Визначте Вік та Стать",
+                3: "Крок 3: Оберіть Клас"
+            };
+            document.getElementById('step-title').textContent = titles[currentStep];
+        }
+
+        function nextStep() {
+            if (currentStep === 1 && !state.race) {
+                tg.showAlert('Виберіть, будь ласка, Расу, щоб продовжити.');
+                return;
+            }
+            if (currentStep === 2 && !state.gender) {
+                tg.showAlert('Виберіть, будь ласка, Стать, щоб продовжити.');
+                return;
+            }
+            
+            if (currentStep < 3) {
+                currentStep++;
+                updateUI();
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                updateUI();
+            }
+        }
+        
+        function initialize() {
+            // Ініціалізація кроку 1 (Раса)
+            generateChoices('race-choices', RPG_RACES, 'race', 'choice-description');
+            // Ініціалізація кроку 2 (Стать)
+            generateChoices('gender-choices', RPG_GENDERS, 'gender');
+            // Ініціалізація кроку 3 (Клас)
+            generateChoices('class-choices', RPG_CLASSES, 'class', 'choice-description-class');
+
+            // Відображення першого кроку
+            updateUI();
+            
+            // Встановлення початкового значення віку
+            updateAge(state.age);
+        }
+        
+        // --- ФІНАЛІЗАЦІЯ ---
+        function finalizeCreation() {
+            if (!state.class) {
+                tg.showAlert('Виберіть, будь ласка, Клас, щоб завершити.');
+                return;
+            }
+
+            const dataToSend = {
+                action: "CREATE_CHARACTER",
+                race: state.race,
+                gender: state.gender,
+                age: state.age,
+                class: state.class
+            };
+            
+            // Відправка JSON даних у Telegram Bot
+            tg.sendData(JSON.stringify(dataToSend));
+            
+            // Візуальний зворотний зв'язок
+            tg.close();
+        }
+        
+        initialize();
+        
+    </script>
+</body>
+</html>
