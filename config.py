@@ -1,9 +1,9 @@
 # config.py
 
 # --- ТВОЇ КЛЮЧІ ---
-GOOGLE_API_KEY = "AIzaSyAVAAJjR0j_wnUGPFTSbfqBfWvnJsDTXyg" 
-API_TOKEN = '8271877189:AAF-uWO5vB2WdfwDx5_5Fzyyyhfx8yAc5u8'
-ADMIN_ID = 863085352
+GOOGLE_API_KEY = "MY API" 
+API_TOKEN = 'MY API'
+ADMIN_ID = 00000000
 DB_NAME = 'game_engine.db'
 
 FAR_LANDS_START_ID = 2
@@ -245,4 +245,5 @@ MAP_LOCATIONS = {
         "desc": "The Forgotten Isle: Small island on South-Eastern side of Winterquard, winter forever, hard to reach by boat or swimming. Isolated, strange architecture, alien flora. Danger: Unknown ancient technology, madness, extreme cold.",
         "adjacent": ["Winterfall", "Heathergan"]
     }
+
 }
